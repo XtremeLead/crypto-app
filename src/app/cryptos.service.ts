@@ -31,7 +31,6 @@ export class CryptosService {
       params
     ).pipe(
       tap(result => {
-        //result.sort((a,b) => <any>a.wsname - <any>b.wsname);
         //console.log('fetching pairs done', result)
       }),
       //catchError(this.handleError)

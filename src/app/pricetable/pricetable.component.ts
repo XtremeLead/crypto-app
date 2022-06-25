@@ -16,15 +16,12 @@ export class PricetableComponent implements OnInit {
     private cryptoService: CryptosService
   ) { 
     //receive data from / subscribe to data in service
-    //this.cryptoService.tickerData.subscribe(tickerdata => this.tickerdata = tickerdata);
-
     this.cryptoService.tickerData.subscribe((data: ITickers[]) => {
       console.log('received data');
       this.tickerdata.data = data;
     });
   }
 
-  //tickerdata:       ITickers[]  = [];
   tickerdata = new MatTableDataSource<ITickers>();
   displayedColumns: string[]    = ['name','price', 'input1', 'input2', 'total', 'total2'];
   edits: any = {};
@@ -33,7 +30,6 @@ export class PricetableComponent implements OnInit {
 
   ngOnInit(): void {
     //receive data from / subscribe to data in service
-    //this.cryptoService.tickerData.subscribe(tickerdata => this.tickerdata = tickerdata)
     this.cryptoService.tickerData.subscribe((data: ITickers[]) => {
       const combinedData = this.combineLocalStorageWithData(data);
  
@@ -42,24 +38,8 @@ export class PricetableComponent implements OnInit {
   }
   
   processInput(event: any, ele: any, index: number): void {
-    //let inputId: string = `${ ele.name }-${ row }-${ index + 1 }`;
-    //let newValues:{ [key: string]: any } = ele;
-
-    ///newValues[col] = this.edits[inputId];
-    //newValues[col] = event.target.value;
-
-    ///this.updateLocalStorage(ele.name, `input${ index + 1 }`, this.edits[inputId]);
     this.updateLocalStorage(ele.name, `input${ index + 1 }`, event.target.value);
-
-
-    // let newData: any = [];
-    //console.log(this.tickerdata.filteredData);
-    // console.log(this.cryptoService.getTickerData().source.value);
-    //console.log(this.cryptoService.getTickerData().source.value)
     const combinedData = this.combineLocalStorageWithData(this.tickerdata.filteredData);
-    //this.cryptoService.setTickerData(this.tickerdata.filteredData);
-
-    
     this.cryptoService.setTickerData(combinedData);
   }
 
