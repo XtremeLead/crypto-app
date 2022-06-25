@@ -1,0 +1,18 @@
+<mat-form-field>
+    <mat-label>Select an option</mat-label>
+    <mat-select 
+        multiple 
+        [(value)]="selected" 
+        (selectionChange)="saveToLocalStorage($event.value)"
+        [(ngModel)]="selectedTickers"
+    >
+        <mat-option *ngFor="let p of flattenedPairs; let i = index" [value]="p.name">
+                {{ p.wsname}}
+        </mat-option>
+    </mat-select>
+</mat-form-field>
+  
+<button mat-raised-button (click)="getTickerData($event)">Get prices</button>
+
+
+
