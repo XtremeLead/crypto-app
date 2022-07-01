@@ -81,12 +81,17 @@ export class PairselectorComponent implements OnInit {
     }
     
     // add new items
-    let existingInLocalstorage = this.getFromLocalStorage('tickersjson');
+    let existingInLocalstorage: Array<any> = this.getFromLocalStorage('tickersjson');
+    if(!existingInLocalstorage) existingInLocalstorage = [];
     let arrAddedTickers: Array<any> = [];
     // loop through selected items
     for(let val in value){
       // find item in localstorage
-      let found = existingInLocalstorage.find( ({ name }) => name === value[val] );
+      let found: boolean = false;
+
+      if(existingInLocalstorage.length > 0){
+        found = existingInLocalstorage.find( ({ name }) => name === value[val]);
+      }
       let pairdata: any = this.flattenedPairs.find(({ name }) => name === value[val]);
 
       // if not in localstorage, add to arrAddedTickers array

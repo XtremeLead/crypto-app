@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { trigger, style, transition, animate, keyframes, query, stagger, state, group } from '@angular/animations';
+import { trigger, style, transition, animate } from '@angular/animations';
 import { CryptosService } from '../cryptos.service';
 import { ITickers } from '../itickers';
 import { MatTableDataSource } from '@angular/material/table';
