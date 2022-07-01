@@ -12,3 +12,33 @@ input::-webkit-inner-spin-button {
 input[type=number] {
   -moz-appearance: textfield;
 }
+
+.up{
+  -webkit-animation: bgcolorToGreen 300ms;
+  animation: bgcolorToGreen 300ms;
+  animation-iteration-count: 1;
+}
+.down{
+  -webkit-animation: bgcolorToRed 300ms;
+  animation: bgcolorToRed 300ms;
+  animation-iteration-count: 1;
+}
+
+@keyframes bgcolorToRed {
+  0% {
+      color: red;
+  }
+
+  100% {
+      color: white;
+  }
+}
+@keyframes bgcolorToGreen {
+  0% {
+      color: limegreen;
+  }
+
+  100% {
+      color: white;
+  }
+}

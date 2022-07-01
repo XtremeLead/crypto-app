@@ -23,4 +23,5 @@ export interface ITicker {
     name?: string;
     input1?: any;
     input2?: any;
+    ticker?: string;
 }

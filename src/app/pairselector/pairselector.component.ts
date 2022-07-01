@@ -39,6 +39,8 @@ export class PairselectorComponent implements OnInit {
     this.cryptoService.fetchPairs()
       .subscribe(tickerpairs => {
         this.tickerPairs = tickerpairs;
+        console.log(tickerpairs);
+        
         let tmpArray:Array<any> = [];
         for (const k in this.tickerPairs){
           const vals: { [key: string]: any} = {
@@ -47,9 +49,12 @@ export class PairselectorComponent implements OnInit {
           for (const l in this.tickerPairs[k]) {
             vals[l] = this.tickerPairs[k][l];
           }
+          //console.log(vals);
+          
           tmpArray.push(vals);
         }
         this.flattenedPairs = this.sortPairs(tmpArray);
+        
       })
   }
   
@@ -67,8 +72,9 @@ export class PairselectorComponent implements OnInit {
   saveToLocalStorage(value:Array<string>): void {
     let arrTickers: Array<any> = [];
 
-    // add name property to selected items
+    // add name property to selected items. value is i.e. ['1INCHEUR', '1INCHUSD', 'AAVEAUD', 'AAVEETH']
     for(const val in value) {
+      
       let vals: { [key: string]: any} = {};
        vals['name'] = value[val];
        arrTickers.push(vals);
@@ -81,10 +87,13 @@ export class PairselectorComponent implements OnInit {
     for(let val in value){
       // find item in localstorage
       let found = existingInLocalstorage.find( ({ name }) => name === value[val] );
+      let pairdata: any = this.flattenedPairs.find(({ name }) => name === value[val]);
+
       // if not in localstorage, add to arrAddedTickers array
       if(!found) {
         let vals: { [key: string]: any} = {};
         vals['name'] = value[val];
+        vals['ticker'] = pairdata['wsname'];
         arrAddedTickers.push(vals);
       }
     }
