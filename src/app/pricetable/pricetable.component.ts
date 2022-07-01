@@ -1,19 +1,30 @@
 import { Component, OnInit } from '@angular/core';
+import { trigger, style, transition, animate, keyframes, query, stagger, state, group } from '@angular/animations';
 import { CryptosService } from '../cryptos.service';
-import { ITicker } from '../iticker';
 import { ITickers } from '../itickers';
 import { MatTableDataSource } from '@angular/material/table';
 import { WebsocketService } from '../websocket.service';
 import { TokenService } from '../token.service';
-import { environment } from '../../environments/environment';
-import { Message } from '@angular/compiler/src/i18n/i18n_ast';
-import { identifierModuleUrl } from '@angular/compiler';
 
 
 @Component({
   selector: 'app-pricetable',
   templateUrl: './pricetable.component.html',
-  styleUrls: ['./pricetable.component.css']
+  styleUrls: ['./pricetable.component.css'],
+  animations: [
+    trigger('valueAnimation', [
+      transition(':increment', [
+          style({ color: 'limegreen' }),
+          animate('0.4s linear', style('*'))
+        ]
+      ),
+      transition(':decrement', [
+          style({ color: 'red' }),
+          animate('0.4s linear', style('*'))
+        ]
+      )
+    ])
+  ]
 })
 export class PricetableComponent implements OnInit {
 
@@ -45,6 +56,7 @@ export class PricetableComponent implements OnInit {
     });
   }
   
+
   processInput(event: any, ele: any, index: number): void {
     this.updateLocalStorage(ele.name, `input${ index + 1 }`, event.target.value);
     const combinedData = this.combineLocalStorageWithData(this.tickerdata.filteredData);
@@ -64,7 +76,6 @@ export class PricetableComponent implements OnInit {
 
   combineLocalStorageWithData(data: any): any{
     const arrTickers: any = JSON.parse(localStorage.getItem('tickersjson')!);
-    
     for(let i in arrTickers) {
       for(let j in data) {
         if(arrTickers[i]['name'] == data[j]['name']) {
@@ -77,7 +88,6 @@ export class PricetableComponent implements OnInit {
         }
       }
     }
-    
     return data;
   }
 
@@ -153,7 +163,8 @@ export class PricetableComponent implements OnInit {
     this.tickerdata.filteredData.forEach(item => {
       if(item.ticker.toString() == message.pair.toString()) {
         const tmp1: any = item.c;
-        const tmp2: any = (+item.c[0] < +priceInfo.value) ? 'up' : 'down';
+        const rnd = Math.floor(Math.random() * 100);
+        const tmp2: any = (+item.c[0] < +priceInfo.value) ? 'up'+rnd : 'down'+rnd;
         item.direction = tmp2;
         tmp1[0] = priceInfo.value;
         item.c[0] = tmp1[0];

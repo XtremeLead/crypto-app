@@ -1,3 +1,7 @@
-.mat-raised-button{
+.mat-raised-button {
     display: block;
+    margin: 15px;
+}
+mat-form-field{
+    margin-left: 10px;
 }

@@ -1,5 +1,14 @@
-table {
+.table-container {
+  /*height: 100%;*/
   width: 100%;
+  max-width: 100%;
+  overflow: auto;
+}
+mat-table {
+  width: 1400px;
+}
+.mat-raised-button{
+  margin: 15px;
 }
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
@@ -13,14 +22,14 @@ input[type=number] {
   -moz-appearance: textfield;
 }
 
-.up{
-  -webkit-animation: bgcolorToGreen 300ms;
-  animation: bgcolorToGreen 300ms;
+[class^="up"]{
+  -webkit-animation: bgcolorToGreen 500ms;
+  animation: bgcolorToGreen 500ms;
   animation-iteration-count: 1;
 }
-.down{
-  -webkit-animation: bgcolorToRed 300ms;
-  animation: bgcolorToRed 300ms;
+[class^="down"]{
+  -webkit-animation: bgcolorToRed 500ms;
+  animation: bgcolorToRed 500ms;
   animation-iteration-count: 1;
 }
 
