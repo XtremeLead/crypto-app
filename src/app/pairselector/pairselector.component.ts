@@ -1,7 +1,5 @@
 import { Component, OnInit, EventEmitter, Output } from '@angular/core';
-import { ITickerPair } from '../iticker-pair';
 import { ITickerPairs } from '../iticker-pairs';
-import { ITicker } from '../iticker';
 import { ITickers } from '../itickers';
 import { CryptosService } from '../cryptos.service';
 import { ITickerPairsFlat } from '../iticker-pairs-flat';

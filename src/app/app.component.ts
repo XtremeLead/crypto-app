@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { TokenService } from './token.service';
 import { WebsocketService } from './websocket.service';
-import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -9,7 +8,7 @@ import { environment } from '../environments/environment';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  title = 'Sci Sca Scratchen';
+  title = 'Scee Scaa Scratchen';
 
   constructor(
     private tokenService: TokenService,
