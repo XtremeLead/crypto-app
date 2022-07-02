@@ -106,6 +106,10 @@ export class PricetableComponent implements OnInit {
     this.checkWebsocketsStatus();
   }
 
+  stopStream(): void {
+    this.websocketService.stopWebsocket();
+  }
+
   checkWebsocketsStatus(): void {
     // check if websocket endpoint is online and then get the authToken if needed
     this.tokenService.fetchStatus().subscribe((status: any[]) => {

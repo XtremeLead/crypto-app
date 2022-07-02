@@ -14,7 +14,7 @@
       <ng-container matColumnDef="input1">
         <mat-header-cell *matHeaderCellDef> Koers bij verkoop </mat-header-cell>
         <mat-cell *matCellDef="let element; let i = index;">
-          <mat-form-field>
+          <div>
             <input 
               type="number" 
               matInput 
@@ -22,21 +22,21 @@
               placeholder="enter number" 
               [(ngModel)]=element.input1
               (change)="processInput($event, element, 0)">
-          </mat-form-field>
+          </div>
         </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="input2">
         <mat-header-cell *matHeaderCellDef> Aantal verkocht </mat-header-cell>
         <mat-cell *matCellDef="let element; let i = index;">
-          <mat-form-field>
+          <div>
             <input 
               type="number" 
               matInput 
               placeholder="enter number" 
               [(ngModel)]=element.input2
               (change)="processInput($event, element, 1)">
-          </mat-form-field>
+          </div>
       </mat-cell>
       </ng-container>
 
@@ -55,10 +55,12 @@
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
   </mat-table>
-  <p>
-    <button mat-raised-button (click)="startStream()">startStream</button>
-  </p>
-</section>
 
+
+</section>
+<p *ngIf="tickerdata.data.length > 0">
+  <button mat-raised-button (click)="startStream()">Start Stream</button>
+  <button mat-raised-button (click)="stopStream()">Stop Stream</button>
+</p>
 <!-- [(ngModel)]="edits[element.name + '-' + tickerdata.filteredData.indexOf(element) + '-1']"  -->
 <!-- [(ngModel)]="edits[element.name + '-' + tickerdata.filteredData.indexOf(element) + '-2']"  -->

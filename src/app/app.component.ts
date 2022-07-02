@@ -9,7 +9,7 @@ import { environment } from '../environments/environment';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  title = 'crypto-app';
+  title = 'Sci Sca Scratchen';
 
   constructor(
     private tokenService: TokenService,

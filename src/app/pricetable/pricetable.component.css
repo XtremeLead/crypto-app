@@ -5,11 +5,30 @@
   overflow: auto;
 }
 mat-table {
-  width: 1400px;
+  width: 800px;
+}
+.mat-column-name{
+  flex: 0 0 15%;
+}
+.mat-column-price{
+  flex: 0 0 15%;
+}
+.mat-column-input1{
+  flex: 0 0 18%;
+}
+.mat-column-input2{
+  flex: 0 0 18%;
+}
+.mat-column-total{
+  flex: 0 0 15%;
+}
+.mat-column-total2{
+  flex: 0 0 15%;
 }
 .mat-raised-button{
   margin: 15px;
 }
+
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -20,34 +39,4 @@ input::-webkit-inner-spin-button {
 /* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
-}
-
-[class^="up"]{
-  -webkit-animation: bgcolorToGreen 500ms;
-  animation: bgcolorToGreen 500ms;
-  animation-iteration-count: 1;
-}
-[class^="down"]{
-  -webkit-animation: bgcolorToRed 500ms;
-  animation: bgcolorToRed 500ms;
-  animation-iteration-count: 1;
-}
-
-@keyframes bgcolorToRed {
-  0% {
-      color: red;
-  }
-
-  100% {
-      color: white;
-  }
-}
-@keyframes bgcolorToGreen {
-  0% {
-      color: limegreen;
-  }
-
-  100% {
-      color: white;
-  }
 }
