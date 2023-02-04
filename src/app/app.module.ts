@@ -18,13 +18,17 @@ import {MatInputModule} from '@angular/material/input';
 import { CryptosComponent } from './cryptos/cryptos.component';
 import { PairselectorComponent } from './pairselector/pairselector.component';
 import { PricetableComponent } from './pricetable/pricetable.component';
+import { PortfolioComponent } from './portfolio/portfolio.component';
+import { PortfoliotableComponent } from './portfoliotable/portfoliotable.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     CryptosComponent,
     PairselectorComponent,
-    PricetableComponent
+    PricetableComponent,
+    PortfolioComponent,
+    PortfoliotableComponent
   ],
   imports: [
     BrowserModule,
