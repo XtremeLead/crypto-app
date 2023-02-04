@@ -145,7 +145,7 @@ export class PairselectorComponent implements OnInit {
   }
 
   getTickerData(event: any): void {
-      this.getSelectedTickers();
+      //this.getSelectedTickers();
 
       if(!this.selectedTickers) return;
 
@@ -171,6 +171,7 @@ export class PairselectorComponent implements OnInit {
           //send data to service
           this.cryptoService.setTickerData(this.tickerData)
         })
+        //this.cryptoService.fetchOhlcData(this.selectedTickers);
   }
  
 }

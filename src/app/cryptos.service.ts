@@ -12,6 +12,7 @@ export class CryptosService {
   private corsUrl       = 'https://m.waabaa.nl/php/cors.php';
   private pairsUrl      = 'https://api.kraken.com/0/public/AssetPairs';
   private tickerUrl     = 'https://api.kraken.com/0/public/Ticker';
+  private ohlcUrl       = 'https://api.kraken.com/0/public/OHLC';
   private tickerSuffix  = '?pair=';
 
   //create subscribable datasource
@@ -52,6 +53,36 @@ export class CryptosService {
         }),
         //catchError(this.handleError)
     );
+  }
+
+  fetchOhlcData(tickers: string[]):void{// Observable<string[]> {
+      //int <time>, string <open>, string <high>, string <low>, string <close>, string <vwap>, string <volume>, int <count>
+      console.log('fetchohl');
+      //&since=1657058400&interval=1440
+      const vals: { [key: string]: any} = {};
+      tickers.forEach(ticker => {
+        vals.name = ticker;
+        vals.values = [];
+        const params = new FormData();
+        params.append('url', this.ohlcUrl);
+        params.append('objectKey', 'result')
+        params.append('query', `${this.tickerSuffix}${ticker}&since=1657058400&interval=1440`);
+        console.log(params);
+        
+        this.http.post<any>(
+          this.corsUrl,
+          params
+        ).pipe(
+          tap(result => {
+            vals.values = result;
+            console.log(vals);
+          }),
+          //catchError(this.handleError)
+        );
+        
+        
+      });
+
   }
 
   setTickerData(data:any){
