@@ -102,8 +102,12 @@ export class PortfoliotableComponent implements OnInit {
 
   calculateTotal() {
     return this.tickerdata.filteredData.reduce((accum, curr) => {
-      const amount = parseFloat(curr.input1.toString());
-      const price = parseFloat(curr.c[0].toString());
+      let amount = 0;
+      let price = 0;
+      try {
+        const amount = parseFloat(curr.input1.toString());
+        const price = parseFloat(curr.c[0].toString());
+      } catch (error) {}
 
       return accum + amount * price;
     }, 0);

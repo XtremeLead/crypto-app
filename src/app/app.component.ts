@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TokenService } from './token.service';
 import { WebsocketService } from './websocket.service';
-import { MatMenuModule } from '@angular/material/menu';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -13,8 +13,16 @@ export class AppComponent implements OnInit {
 
   constructor(
     private tokenService: TokenService,
-    private websocketService: WebsocketService
+    private websocketService: WebsocketService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {}
+  getRoute(): String {
+    const path = this.router.url.replace('/', '');
+    return path == '' ? 'Home' : this.capitalizeFirstLetter(path);
+  }
+  capitalizeFirstLetter(string: String) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
 }
