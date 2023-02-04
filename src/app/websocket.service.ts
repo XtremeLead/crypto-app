@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { webSocket, WebSocketSubject } from 'rxjs/webSocket'
-import { BehaviorSubject } from 'rxjs'
+import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
+import { BehaviorSubject } from 'rxjs';
 import { environment } from '../environments/environment';
 import { TokenService } from './token.service';
 
@@ -11,7 +11,7 @@ export class WebsocketService {
   subject!: WebSocketSubject<any>;
   endpointStatus!: string;
   sub: ISub = {
-    "name":"ticker"
+    name: 'ticker'
   };
   pairs: Array<string> = [];
   subscriptionMessage: ISubMsg = {
@@ -21,39 +21,41 @@ export class WebsocketService {
   };
   websocketIsStopped: boolean = true;
   authToken!: string;
-  
 
   // provide subscribable object
   private stream: any = [];
-  behaviorSubjectTickerData: BehaviorSubject<ITickerData> = new BehaviorSubject<ITickerData>(this.stream);
+  behaviorSubjectTickerData: BehaviorSubject<ITickerData> = new BehaviorSubject<
+    ITickerData
+  >(this.stream);
 
-  constructor(private tokenService: TokenService) { }
+  constructor(private tokenService: TokenService) {}
 
   whichEndpoint(): string {
-    return environment.usePrivateEndpoint ? environment.apiPrivateEndpoint : environment.apiPublicEndpoint;
+    return environment.usePrivateEndpoint
+      ? environment.apiPrivateEndpoint
+      : environment.apiPublicEndpoint;
   }
 
-  startWebsocket(): void{
-    if(this.endpointStatus == 'online') {
-      this.subject = <WebSocketSubject<any>>webSocket(this.whichEndpoint())
+  startWebsocket(): void {
+    if (this.endpointStatus == 'online') {
+      this.subject = <WebSocketSubject<any>>webSocket(this.whichEndpoint());
 
-      if(environment.usePrivateEndpoint) {
+      if (environment.usePrivateEndpoint) {
         this.subscriptionMessage = {
-          event: "subscribe",
-          subscription:
-          {
-            name: "ownTrades",
+          event: 'subscribe',
+          subscription: {
+            name: 'ownTrades',
             token: this.authToken
           }
-        }
-      }else{
+        };
+      } else {
         this.subscriptionMessage = {
           event: 'subscribe',
           subscription: this.sub,
           pair: this.pairs
         };
       }
-     
+
       console.log('start ws');
 
       this.subject.subscribe(data => {
@@ -61,27 +63,31 @@ export class WebsocketService {
       });
       this.subject.next(this.subscriptionMessage);
       this.websocketIsStopped = false;
-    }else{
+    } else {
       console.log('endpoint offline?');
     }
   }
 
   parseMessage(data: any) {
-    if(data.event != 'heartbeat' && data[2] == 'ticker' && data.status != 'error') {
+    if (
+      data.event != 'heartbeat' &&
+      data[2] == 'ticker' &&
+      data.status != 'error'
+    ) {
       const tickerdata: ITickerData = {
         pair: data[3],
         value: data[1]['c'][0]
-      }
+      };
       // push new data to subscribable object
       this.behaviorSubjectTickerData.next(tickerdata);
     }
-    if(data.status == 'error') {
-      console.error(data.errorMessage)
+    if (data.status == 'error') {
+      console.error(data.errorMessage);
       const tickerdata: ITickerData = {
         pair: '-',
         value: '-',
         error: data.errorMessage
-      }
+      };
       // push error data to subscribable object
       this.behaviorSubjectTickerData.next(tickerdata);
     }
@@ -98,7 +104,6 @@ interface ISubMsg {
   event: string;
   subscription: ISub;
   pair?: Array<string>;
-
 }
 interface ISub {
   name: string;

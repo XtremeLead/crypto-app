@@ -5,6 +5,7 @@ import { ITickers } from '../itickers';
 import { MatTableDataSource } from '@angular/material/table';
 import { WebsocketService } from '../websocket.service';
 import { TokenService } from '../token.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-portfoliotable',
@@ -27,11 +28,12 @@ export class PortfoliotableComponent implements OnInit {
   constructor(
     private cryptoService: CryptosService,
     private tokenService: TokenService,
-    private websocketService: WebsocketService
+    private websocketService: WebsocketService,
+    private router: Router
   ) {
     //receive data from / subscribe to data in service
     this.cryptoService.tickerData.subscribe((data: ITickers[]) => {
-      console.log('received data');
+      console.log('received data', data);
       this.tickerdata.data = data;
     });
   }
@@ -43,6 +45,7 @@ export class PortfoliotableComponent implements OnInit {
   json: string = '';
   useRealtime: boolean = false;
   websocketError: any = undefined;
+  path = this.router.url.replace('/', '');
 
   ngOnInit(): void {
     //receive data from / subscribe to data in service
@@ -63,7 +66,7 @@ export class PortfoliotableComponent implements OnInit {
 
   updateLocalStorage(name: string, input: string, value: any): void {
     const arrTickers: Array<any> = JSON.parse(
-      localStorage.getItem('tickersjson')!
+      localStorage.getItem(this.path + 'tickersjson')!
     );
 
     for (let i in arrTickers) {
@@ -71,11 +74,13 @@ export class PortfoliotableComponent implements OnInit {
         arrTickers[i][input.toString()] = value;
       }
     }
-    localStorage.setItem('tickersjson', JSON.stringify(arrTickers));
+    localStorage.setItem(this.path + 'tickersjson', JSON.stringify(arrTickers));
   }
 
   combineLocalStorageWithData(data: any): any {
-    const arrTickers: any = JSON.parse(localStorage.getItem('tickersjson')!);
+    const arrTickers: any = JSON.parse(
+      localStorage.getItem(this.path + 'tickersjson')!
+    );
     for (let i in arrTickers) {
       for (let j in data) {
         if (arrTickers[i]['name'] == data[j]['name']) {
@@ -105,10 +110,9 @@ export class PortfoliotableComponent implements OnInit {
       let amount = 0;
       let price = 0;
       try {
-        const amount = parseFloat(curr.input1.toString());
-        const price = parseFloat(curr.c[0].toString());
+        amount = parseFloat(curr.input1.toString());
+        price = parseFloat(curr.c[0].toString());
       } catch (error) {}
-
       return accum + amount * price;
     }, 0);
   }
@@ -141,7 +145,9 @@ export class PortfoliotableComponent implements OnInit {
     });
   }
   startWebsocketService() {
-    const arrTickers: any = JSON.parse(localStorage.getItem('tickersjson')!);
+    const arrTickers: any = JSON.parse(
+      localStorage.getItem(this.path + 'tickersjson')!
+    );
     let subTickers: string[] = [];
     for (let ticker in arrTickers) {
       subTickers.push(arrTickers[ticker].ticker);

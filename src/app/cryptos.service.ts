@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError, BehaviorSubject  } from 'rxjs';
+import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { ITickerPairs } from './iticker-pairs';
 import { ITickers } from './itickers';
 import { catchError, tap } from 'rxjs/operators';
@@ -9,31 +9,27 @@ import { catchError, tap } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class CryptosService {
-  private corsUrl       = 'https://m.waabaa.nl/php/cors.php';
-  private pairsUrl      = 'https://api.kraken.com/0/public/AssetPairs';
-  private tickerUrl     = 'https://api.kraken.com/0/public/Ticker';
-  private ohlcUrl       = 'https://api.kraken.com/0/public/OHLC';
-  private tickerSuffix  = '?pair=';
+  private corsUrl = 'https://m.waabaa.nl/php/cors.php';
+  private pairsUrl = 'https://api.kraken.com/0/public/AssetPairs';
+  private tickerUrl = 'https://api.kraken.com/0/public/Ticker';
+  private ohlcUrl = 'https://api.kraken.com/0/public/OHLC';
+  private tickerSuffix = '?pair=';
 
   //create subscribable datasource
-  private tickerDataSource  = new BehaviorSubject([]);
-  tickerData                = this.tickerDataSource.asObservable();
+  private tickerDataSource = new BehaviorSubject([]);
+  tickerData = this.tickerDataSource.asObservable();
 
-  constructor(
-    private http: HttpClient) { }
-  
+  constructor(private http: HttpClient) {}
+
   fetchPairs(): Observable<ITickerPairs[]> {
     const params = new FormData();
     params.append('url', this.pairsUrl);
-    params.append('objectKey', 'result')
+    params.append('objectKey', 'result');
 
-    return this.http.post<ITickerPairs[]>(
-      this.corsUrl,
-      params
-    ).pipe(
+    return this.http.post<ITickerPairs[]>(this.corsUrl, params).pipe(
       tap(result => {
         //console.log('fetching pairs done', result)
-      }),
+      })
       //catchError(this.handleError)
     );
   }
@@ -44,54 +40,49 @@ export class CryptosService {
     params.append('objectKey', 'result');
     params.append('query', this.tickerSuffix + tickers);
 
-    return this.http.post<ITickers[]>(
-      this.corsUrl,
-      params,
-      ).pipe(
-        tap(result => {
-          console.log('fetching prices done', result)
-        }),
-        //catchError(this.handleError)
+    return this.http.post<ITickers[]>(this.corsUrl, params).pipe(
+      tap(result => {
+        console.log('fetching prices done', result);
+      })
+      //catchError(this.handleError)
     );
   }
 
-  fetchOhlcData(tickers: string[]):void{// Observable<string[]> {
-      //int <time>, string <open>, string <high>, string <low>, string <close>, string <vwap>, string <volume>, int <count>
-      console.log('fetchohl');
-      //&since=1657058400&interval=1440
-      const vals: { [key: string]: any} = {};
-      tickers.forEach(ticker => {
-        vals.name = ticker;
-        vals.values = [];
-        const params = new FormData();
-        params.append('url', this.ohlcUrl);
-        params.append('objectKey', 'result')
-        params.append('query', `${this.tickerSuffix}${ticker}&since=1657058400&interval=1440`);
-        console.log(params);
-        
-        this.http.post<any>(
-          this.corsUrl,
-          params
-        ).pipe(
-          tap(result => {
-            vals.values = result;
-            console.log(vals);
-          }),
-          //catchError(this.handleError)
-        );
-        
-        
-      });
+  fetchOhlcData(tickers: string[]): void {
+    // Observable<string[]> {
+    //int <time>, string <open>, string <high>, string <low>, string <close>, string <vwap>, string <volume>, int <count>
+    console.log('fetchohl');
+    //&since=1657058400&interval=1440
+    const vals: { [key: string]: any } = {};
+    tickers.forEach(ticker => {
+      vals.name = ticker;
+      vals.values = [];
+      const params = new FormData();
+      params.append('url', this.ohlcUrl);
+      params.append('objectKey', 'result');
+      params.append(
+        'query',
+        `${this.tickerSuffix}${ticker}&since=1657058400&interval=1440`
+      );
+      console.log(params);
 
+      this.http.post<any>(this.corsUrl, params).pipe(
+        tap(result => {
+          vals.values = result;
+          console.log(vals);
+        })
+        //catchError(this.handleError)
+      );
+    });
   }
 
-  setTickerData(data:any){
+  setTickerData(data: any) {
     //update subscribable datasource
-    this.tickerDataSource.next(data)
+    this.tickerDataSource.next(data);
   }
 
-  getTickerData():any{
-      return this.tickerData;
+  getTickerData(): any {
+    return this.tickerData;
   }
 
   private handleError(error: HttpErrorResponse) {
@@ -102,13 +93,10 @@ export class CryptosService {
       // The backend returned an unsuccessful response code.
       // The response body may contain clues as to what went wrong,
       console.error(
-        `Backend returned code ${error.status}, ` +
-        `body was: ${error.error}`);
+        `Backend returned code ${error.status}, ` + `body was: ${error.error}`
+      );
     }
     // return an observable with a user-facing error message
-    return throwError(
-      'Something bad happened; please try again later.');
-  };
-
+    return throwError('Something bad happened; please try again later.');
+  }
 }
-

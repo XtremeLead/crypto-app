@@ -163,6 +163,7 @@ export class PairselectorComponent implements OnInit {
         for (const l in this.tickerData[k]) {
           vals[l] = this.tickerData[k][l];
         }
+
         tmpArray.push(vals);
       }
 
