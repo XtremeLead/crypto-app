@@ -100,6 +100,7 @@ export class PairselectorComponent implements OnInit {
         let vals: { [key: string]: any } = {};
         vals['name'] = value[val];
         vals['ticker'] = pairdata['wsname'];
+        vals['decimals'] = pairdata['pair_decimals'];
         arrAddedTickers.push(vals);
       }
     }

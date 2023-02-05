@@ -2,10 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { trigger, style, transition, animate } from '@angular/animations';
 import { CryptosService } from '../cryptos.service';
 import { ITickers } from '../itickers';
+import { ITicker } from '../iticker';
 import { MatTableDataSource } from '@angular/material/table';
 import { WebsocketService } from '../websocket.service';
 import { TokenService } from '../token.service';
 import { Router } from '@angular/router';
+import { EMFILE } from 'constants';
 
 @Component({
   selector: 'app-portfoliotable',
@@ -116,6 +118,11 @@ export class PortfoliotableComponent implements OnInit {
       return accum + amount * price;
     }, 0);
   }
+
+  getDecimals(element: ITicker) {
+    return element.decimals == 1 ? 2 : element.decimals;
+  }
+
   // Websocket stuff
   startStream(): void {
     this.checkWebsocketsStatus();

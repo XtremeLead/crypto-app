@@ -11,17 +11,18 @@ o = today’s opening price
 */
 
 export interface ITicker {
-    a: string[];
-    b: string[];
-    c: string[];
-    h: string[];
-    l: string[];
-    o: string;
-    p: string[];
-    t: number[];
-    v: string[];
-    name?: string;
-    input1?: any;
-    input2?: any;
-    ticker?: string;
+  a: string[];
+  b: string[];
+  c: string[];
+  h: string[];
+  l: string[];
+  o: string;
+  p: string[];
+  t: number[];
+  v: string[];
+  name?: string;
+  input1?: any;
+  input2?: any;
+  ticker?: string;
+  decimals?: number;
 }
