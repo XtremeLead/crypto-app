@@ -27,6 +27,7 @@ export class PairselectorComponent implements OnInit {
   ngOnInit(): void {
     this.getPairs();
     this.getSelectedTickers();
+    this.getTickerData(null);
   }
 
   getPairs(): void {
