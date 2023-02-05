@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
 import { ITickerPairs } from '../iticker-pairs';
 import { ITickers } from '../itickers';
 import { CryptosService } from '../cryptos.service';
@@ -22,6 +22,7 @@ export class PairselectorComponent implements OnInit {
   arrTickers: Array<any> = [];
 
   @Output() otickerdata = new EventEmitter<any>();
+  @Input() filter: string = '';
 
   ngOnInit(): void {
     this.getPairs();
@@ -31,7 +32,6 @@ export class PairselectorComponent implements OnInit {
   getPairs(): void {
     this.cryptoService.fetchPairs().subscribe(tickerpairs => {
       this.tickerPairs = tickerpairs;
-      console.log(tickerpairs);
 
       let tmpArray: Array<any> = [];
       for (const k in this.tickerPairs) {
@@ -41,11 +41,18 @@ export class PairselectorComponent implements OnInit {
         for (const l in this.tickerPairs[k]) {
           vals[l] = this.tickerPairs[k][l];
         }
-        //console.log(vals);
 
         tmpArray.push(vals);
       }
-      this.flattenedPairs = this.sortPairs(tmpArray);
+
+      //filter if a filter is passed to the component
+      if (this.filter) {
+        this.flattenedPairs = this.sortPairs(tmpArray).filter(
+          pair => pair.wsname.indexOf('/' + this.filter) > 0
+        );
+      } else {
+        this.flattenedPairs = this.sortPairs(tmpArray);
+      }
     });
   }
 
@@ -173,5 +180,8 @@ export class PairselectorComponent implements OnInit {
       this.cryptoService.setTickerData(this.tickerData);
     });
     //this.cryptoService.fetchOhlcData(this.selectedTickers);
+  }
+  onKey(event: any): void {
+    console.log(event);
   }
 }
