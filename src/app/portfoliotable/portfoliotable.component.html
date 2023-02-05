@@ -16,9 +16,11 @@
         <mat-cell [@valueAnimation]="element.c[0]" *matCellDef="let element">
           {{ element.c[0] | number: "1.2-" + getDecimals(element) }}</mat-cell
         >
-        <mat-footer-cell *matFooterCellDef>{{
-          calculateTotal() | number: "1.2-2"
-        }}</mat-footer-cell>
+        <mat-footer-cell
+          *matFooterCellDef
+          [@valueAnimation]="calculateTotal()"
+          >{{ calculateTotal() | number: "1.2-2" }}</mat-footer-cell
+        >
       </ng-container>
 
       <ng-container matColumnDef="input1">

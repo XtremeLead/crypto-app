@@ -15,4 +15,10 @@
   </mat-select>
 </mat-form-field>
 
-<button mat-raised-button (click)="getTickerData($event)">Get prices</button>
+<div class="fullRow">
+  <button mat-raised-button (click)="getTickerData($event)">Get prices</button>
+  <span class="spacer"></span>
+  <span class="total" [@valueAnimation]="portfolioTotal"
+    >€{{ portfolioTotal | number: "1.2-2" }}</span
+  >
+</div>

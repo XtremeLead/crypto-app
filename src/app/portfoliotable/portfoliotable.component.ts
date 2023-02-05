@@ -7,7 +7,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { WebsocketService } from '../websocket.service';
 import { TokenService } from '../token.service';
 import { Router } from '@angular/router';
-import { EMFILE } from 'constants';
+import { PortfolioTotalService } from '../portfolio-total.service';
 
 @Component({
   selector: 'app-portfoliotable',
@@ -31,11 +31,12 @@ export class PortfoliotableComponent implements OnInit {
     private cryptoService: CryptosService,
     private tokenService: TokenService,
     private websocketService: WebsocketService,
-    private router: Router
+    private router: Router,
+    private portfolioTotalService: PortfolioTotalService
   ) {
     //receive data from / subscribe to data in service
     this.cryptoService.tickerData.subscribe((data: ITickers[]) => {
-      console.log('received data', data);
+      //console.log('received data', data);
       this.tickerdata.data = data;
     });
   }
@@ -108,7 +109,7 @@ export class PortfoliotableComponent implements OnInit {
   }
 
   calculateTotal() {
-    return this.tickerdata.filteredData.reduce((accum, curr) => {
+    const total = this.tickerdata.filteredData.reduce((accum, curr) => {
       let amount = 0;
       let price = 0;
       try {
@@ -117,12 +118,17 @@ export class PortfoliotableComponent implements OnInit {
       } catch (error) {}
       return accum + amount * price;
     }, 0);
+    this.sendTotaltoService(total);
+    return total;
   }
 
   getDecimals(element: ITicker) {
     return element.decimals == 1 ? 2 : element.decimals;
   }
 
+  sendTotaltoService(total: number) {
+    this.portfolioTotalService.sendTotalMsg(total);
+  }
   // Websocket stuff
   startStream(): void {
     this.checkWebsocketsStatus();

@@ -1,7 +1,21 @@
 .mat-raised-button {
-    display: block;
-    margin: 15px;
+  display: inline-flex;
+  margin: 15px;
 }
-mat-form-field{
-    margin-left: 10px;
+mat-form-field {
+  margin-left: 10px;
+}
+.spacer {
+  flex: 1 1 auto;
+}
+.fullRow {
+  width: 100%;
+  display: flex;
+}
+.total {
+  flex-shrink: 0;
+  vertical-align: middle;
+  font-size: 2rem;
+  margin-right: 2rem;
+  margin-top: 1rem;
 }

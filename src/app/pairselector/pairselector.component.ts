@@ -4,14 +4,32 @@ import { ITickers } from '../itickers';
 import { CryptosService } from '../cryptos.service';
 import { ITickerPairsFlat } from '../iticker-pairs-flat';
 import { Router } from '@angular/router';
+import { PortfolioTotalService } from '../portfolio-total.service';
+import { trigger, style, transition, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-pairselector',
   templateUrl: './pairselector.component.html',
-  styleUrls: ['./pairselector.component.css']
+  styleUrls: ['./pairselector.component.css'],
+  animations: [
+    trigger('valueAnimation', [
+      transition(':increment', [
+        style({ color: 'limegreen' }),
+        animate('0.4s linear', style('*'))
+      ]),
+      transition(':decrement', [
+        style({ color: 'red' }),
+        animate('0.4s linear', style('*'))
+      ])
+    ])
+  ]
 })
 export class PairselectorComponent implements OnInit {
-  constructor(private cryptoService: CryptosService, private router: Router) {}
+  constructor(
+    private cryptoService: CryptosService,
+    private router: Router,
+    private portfolioTotalService: PortfolioTotalService
+  ) {}
 
   tickerPairs: ITickerPairs[] = [];
   selected: string = '';
@@ -20,6 +38,7 @@ export class PairselectorComponent implements OnInit {
   sortedPairs: ITickerPairs[] = [];
   flattenedPairs: ITickerPairsFlat[] = [];
   arrTickers: Array<any> = [];
+  portfolioTotal: number = 0;
 
   @Output() otickerdata = new EventEmitter<any>();
   @Input() filter: string = '';
@@ -28,6 +47,9 @@ export class PairselectorComponent implements OnInit {
     this.getPairs();
     this.getSelectedTickers();
     this.getTickerData(null);
+    this.portfolioTotalService.totalMsg$.subscribe(message => {
+      this.portfolioTotal = message;
+    });
   }
 
   getPairs(): void {
