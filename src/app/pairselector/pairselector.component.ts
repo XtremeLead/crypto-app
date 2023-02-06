@@ -39,6 +39,7 @@ export class PairselectorComponent implements OnInit {
   flattenedPairs: ITickerPairsFlat[] = [];
   arrTickers: Array<any> = [];
   portfolioTotal: number = 0;
+  path: String = '';
 
   @Output() otickerdata = new EventEmitter<any>();
   @Input() filter: string = '';
@@ -92,7 +93,7 @@ export class PairselectorComponent implements OnInit {
 
   saveToLocalStorage(value: Array<string>): void {
     let arrTickers: Array<any> = [];
-    const path = this.router.url.replace('/', '');
+    this.path = this.router.url.replace('/', '');
     // add name property to selected items. value is i.e. ['1INCHEUR', '1INCHUSD', 'AAVEAUD', 'AAVEETH']
     for (const val in value) {
       let vals: { [key: string]: any } = {};
@@ -102,7 +103,7 @@ export class PairselectorComponent implements OnInit {
 
     // add new items
     let existingInLocalstorage: Array<any> = this.getFromLocalStorage(
-      path + 'tickersjson'
+      this.path + 'tickersjson'
     );
     if (!existingInLocalstorage) existingInLocalstorage = [];
     let arrAddedTickers: Array<any> = [];
@@ -158,7 +159,7 @@ export class PairselectorComponent implements OnInit {
     }
 
     localStorage.setItem(
-      path + 'tickersjson',
+      this.path + 'tickersjson',
       JSON.stringify(existingInLocalstorage)
     );
   }
@@ -169,8 +170,8 @@ export class PairselectorComponent implements OnInit {
   }
 
   getSelectedTickers(): void {
-    const path = this.router.url.replace('/', '');
-    const tickers = this.getFromLocalStorage(path + 'tickersjson');
+    this.path = this.router.url.replace('/', '');
+    const tickers = this.getFromLocalStorage(this.path + 'tickersjson');
     for (let t in tickers) {
       this.selectedTickers.push(tickers[t].name);
     }

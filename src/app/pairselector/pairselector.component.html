@@ -18,7 +18,10 @@
 <div class="fullRow">
   <button mat-raised-button (click)="getTickerData($event)">Get prices</button>
   <span class="spacer"></span>
-  <span class="total" [@valueAnimation]="portfolioTotal"
+  <span
+    class="total"
+    [@valueAnimation]="portfolioTotal"
+    *ngIf="path == 'portfolio'"
     >€{{ portfolioTotal | number: "1.2-2" }}</span
   >
 </div>
