@@ -123,6 +123,8 @@ export class PortfoliotableComponent implements OnInit {
   }
 
   getDecimals(element: ITicker) {
+    const decimals = element.decimals;
+    if (!decimals) return 2;
     return element.decimals == 1 ? 2 : element.decimals;
   }
 
