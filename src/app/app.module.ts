@@ -23,6 +23,8 @@ import { PairselectorComponent } from './pairselector/pairselector.component';
 import { PricetableComponent } from './pricetable/pricetable.component';
 import { PortfolioComponent } from './portfolio/portfolio.component';
 import { PortfoliotableComponent } from './portfoliotable/portfoliotable.component';
+import { ProfitlossComponent } from './profitloss/profitloss.component';
+import { ProfitlosstableComponent } from './profitlosstable/profitlosstable.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +33,9 @@ import { PortfoliotableComponent } from './portfoliotable/portfoliotable.compone
     PairselectorComponent,
     PricetableComponent,
     PortfolioComponent,
-    PortfoliotableComponent
+    PortfoliotableComponent,
+    ProfitlossComponent,
+    ProfitlosstableComponent
   ],
   imports: [
     BrowserModule,

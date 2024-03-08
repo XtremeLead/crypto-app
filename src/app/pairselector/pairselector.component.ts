@@ -5,6 +5,7 @@ import { CryptosService } from '../cryptos.service';
 import { ITickerPairsFlat } from '../iticker-pairs-flat';
 import { Router } from '@angular/router';
 import { PortfolioTotalService } from '../portfolio-total.service';
+import { ProfitlossService } from '../profitloss.service';
 import { trigger, style, transition, animate } from '@angular/animations';
 
 @Component({
@@ -15,20 +16,21 @@ import { trigger, style, transition, animate } from '@angular/animations';
     trigger('valueAnimation', [
       transition(':increment', [
         style({ color: 'limegreen' }),
-        animate('0.4s linear', style('*'))
+        animate('0.4s linear', style('*')),
       ]),
       transition(':decrement', [
         style({ color: 'red' }),
-        animate('0.4s linear', style('*'))
-      ])
-    ])
-  ]
+        animate('0.4s linear', style('*')),
+      ]),
+    ]),
+  ],
 })
 export class PairselectorComponent implements OnInit {
   constructor(
     private cryptoService: CryptosService,
     private router: Router,
-    private portfolioTotalService: PortfolioTotalService
+    private portfolioTotalService: PortfolioTotalService,
+    private profitlossService: ProfitlossService
   ) {}
 
   tickerPairs: ITickerPairs[] = [];
@@ -39,6 +41,7 @@ export class PairselectorComponent implements OnInit {
   flattenedPairs: ITickerPairsFlat[] = [];
   arrTickers: Array<any> = [];
   portfolioTotal: number = 0;
+  profitlossTotal: number = 0;
   path: String = '';
 
   @Output() otickerdata = new EventEmitter<any>();
@@ -48,19 +51,22 @@ export class PairselectorComponent implements OnInit {
     this.getPairs();
     this.getSelectedTickers();
     this.getTickerData(null);
-    this.portfolioTotalService.totalMsg$.subscribe(message => {
+    this.portfolioTotalService.totalMsg$.subscribe((message) => {
       this.portfolioTotal = message;
+    });
+    this.profitlossService.totalMsg$.subscribe((message) => {
+      this.profitlossTotal = message;
     });
   }
 
   getPairs(): void {
-    this.cryptoService.fetchPairs().subscribe(tickerpairs => {
+    this.cryptoService.fetchPairs().subscribe((tickerpairs) => {
       this.tickerPairs = tickerpairs;
 
       let tmpArray: Array<any> = [];
       for (const k in this.tickerPairs) {
         const vals: { [key: string]: any } = {
-          name: k
+          name: k,
         };
         for (const l in this.tickerPairs[k]) {
           vals[l] = this.tickerPairs[k][l];
@@ -72,7 +78,7 @@ export class PairselectorComponent implements OnInit {
       //filter if a filter is passed to the component
       if (this.filter) {
         this.flattenedPairs = this.sortPairs(tmpArray).filter(
-          pair => pair.wsname.indexOf('/' + this.filter) > 0
+          (pair) => pair.wsname.indexOf('/' + this.filter) > 0
         );
       } else {
         this.flattenedPairs = this.sortPairs(tmpArray);
@@ -140,7 +146,7 @@ export class PairselectorComponent implements OnInit {
     for (let item in existingInLocalstorage) {
       // find item in selected items
       let found = value.find(
-        name => name === existingInLocalstorage[item].name
+        (name) => name === existingInLocalstorage[item].name
       );
       if (!found) {
         // if not in selected items, add to arrRemovedTickers array
@@ -185,7 +191,7 @@ export class PairselectorComponent implements OnInit {
     let tickers: string = this.selectedTickers.toString();
     let tmpArray: Array<any> = [];
 
-    this.cryptoService.fetchTickerData(tickers).subscribe(tickerdata => {
+    this.cryptoService.fetchTickerData(tickers).subscribe((tickerdata) => {
       this.tickerData = tickerdata;
 
       // adding name property

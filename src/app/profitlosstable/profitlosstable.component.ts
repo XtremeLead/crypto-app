@@ -1,0 +1,279 @@
+import { Component, OnInit } from '@angular/core';
+import { trigger, style, transition, animate } from '@angular/animations';
+import { CryptosService } from '../cryptos.service';
+import { ITickers } from '../itickers';
+import { ITicker } from '../iticker';
+import { MatTableDataSource } from '@angular/material/table';
+import { WebsocketService } from '../websocket.service';
+import { TokenService } from '../token.service';
+import { Router } from '@angular/router';
+import { ProfitlossService } from '../profitloss.service';
+
+@Component({
+  selector: 'app-profitlosstable',
+  templateUrl: './profitlosstable.component.html',
+  styleUrls: ['./profitlosstable.component.css'],
+  animations: [
+    trigger('valueAnimation', [
+      transition(':increment', [
+        style({ color: 'limegreen' }),
+        animate('0.4s linear', style('*')),
+      ]),
+      transition(':decrement', [
+        style({ color: 'red' }),
+        animate('0.4s linear', style('*')),
+      ]),
+    ]),
+  ],
+})
+export class ProfitlosstableComponent implements OnInit {
+  constructor(
+    private cryptoService: CryptosService,
+    private tokenService: TokenService,
+    private websocketService: WebsocketService,
+    private router: Router,
+    private ProfitlossService: ProfitlossService
+  ) {
+    //receive data from / subscribe to data in service
+    this.cryptoService.tickerData.subscribe((data: ITickers[]) => {
+      //console.log('received data', data);
+      this.tickerdata.data = data;
+    });
+  }
+
+  tickerdata = new MatTableDataSource<ITickers>();
+  displayedColumns: string[] = [
+    'name',
+    'price',
+    'amount',
+    'newprice',
+    'total',
+    'pctchange',
+  ];
+  edits: any = {};
+  json: string = '';
+  useRealtime: boolean = false;
+  websocketError: any = undefined;
+  path = this.router.url.replace('/', '');
+  pltotal: number = 0;
+
+  ngOnInit(): void {
+    //receive data from / subscribe to data in service
+    this.cryptoService.tickerData.subscribe((data: ITickers[]) => {
+      const combinedData = this.combineLocalStorageWithData(data);
+      this.tickerdata.data = combinedData;
+    });
+  }
+
+  processInput(event: any, ele: any, index: number): void {
+    console.log(event, ele, index);
+
+    this.updateLocalStorage(ele.name, `input${index + 1}`, event.target.value);
+    const combinedData = this.combineLocalStorageWithData(
+      this.tickerdata.filteredData
+    );
+    this.cryptoService.setTickerData(combinedData);
+  }
+
+  updateLocalStorage(name: string, input: string, value: any): void {
+    const arrTickers: Array<any> = JSON.parse(
+      localStorage.getItem(this.path + 'tickersjson')!
+    );
+
+    for (let i in arrTickers) {
+      if (arrTickers[i]['name'] == name) {
+        arrTickers[i][input.toString()] = value;
+      }
+    }
+    localStorage.setItem(this.path + 'tickersjson', JSON.stringify(arrTickers));
+  }
+
+  combineLocalStorageWithData(data: any): any {
+    const arrTickers: any = JSON.parse(
+      localStorage.getItem(this.path + 'tickersjson')!
+    );
+    for (let i in arrTickers) {
+      for (let j in data) {
+        if (arrTickers[i]['name'] == data[j]['name']) {
+          // combine
+          data[j] = {
+            ...data[j],
+            ...arrTickers[i],
+          };
+        }
+      }
+    }
+    return data;
+  }
+
+  multiply(val1: number, val2: number) {
+    if (isNaN(val1) || isNaN(val2)) return 0;
+    return (val1 * val2).toFixed(2);
+  }
+
+  divide(val1: any, val2: any) {
+    if (isNaN(val1) || isNaN(val2) || val1 == 0 || val2 == 0) return 0;
+    return (val1 / val2).toFixed(2);
+  }
+
+  calculateTotal() {
+    const total = this.tickerdata.filteredData.reduce((accum, curr) => {
+      let oldprice = 0;
+      let newprice = 0;
+      let amount = 0;
+      try {
+        oldprice = parseFloat(curr.input1.toString());
+        amount = parseFloat(curr.input2.toString());
+        newprice = parseFloat(curr.c[0].toString());
+      } catch (error) {}
+      return accum + this.calculatePL(oldprice, newprice, amount);
+    }, 0);
+    this.sendTotaltoService(total);
+    this.pltotal = total;
+    return total;
+  }
+  calculateTotalPctChange() {
+    const total = this.tickerdata.filteredData.reduce((accum, curr) => {
+      let oldprice = 0;
+      let amount = 0;
+
+      try {
+        oldprice = parseFloat(curr.input1.toString());
+        amount = parseFloat(curr.input2.toString());
+      } catch (error) {}
+      return accum + oldprice * amount;
+    }, 0);
+    //this.sendTotaltoService(total);
+    return (this.pltotal / total) * 100;
+  }
+
+  calculatePL(oldprice: number, newprice: number, amount: number) {
+    const pricediff = newprice - oldprice;
+    return amount * pricediff;
+  }
+
+  calculatePctChange(oldprice: number, newprice: number) {
+    return ((newprice - oldprice) / oldprice) * 100;
+  }
+
+  sendTotaltoService(total: number) {
+    this.ProfitlossService.sendTotalMsg(total);
+  }
+
+  getDecimals(element: ITicker) {
+    const decimals = element.decimals;
+    if (!decimals) return 2;
+    return element.decimals == 1 ? 2 : element.decimals;
+  }
+
+  // Websocket stuff
+  startStream(): void {
+    this.checkWebsocketsStatus();
+  }
+
+  stopStream(): void {
+    this.websocketService.stopWebsocket();
+  }
+
+  checkWebsocketsStatus(): void {
+    // check if websocket endpoint is online and then get the authToken if needed
+    this.tokenService.fetchStatus().subscribe((status: any[]) => {
+      for (const k in status) {
+        if (k == 'result') {
+          this.websocketService.endpointStatus = status[k]['status'];
+          if (this.websocketService.endpointStatus == 'online') {
+            this.startWebsocketService();
+          }
+        }
+        if (k == 'error') {
+          const err: any[] = status[k];
+          if (err.length > 0) {
+            console.error(err);
+          }
+        }
+      }
+    });
+  }
+  startWebsocketService() {
+    const arrTickers: any = JSON.parse(
+      localStorage.getItem(this.path + 'tickersjson')!
+    );
+    let subTickers: string[] = [];
+    for (let ticker in arrTickers) {
+      subTickers.push(arrTickers[ticker].ticker);
+    }
+
+    this.websocketError = undefined;
+    this.websocketService.pairs = subTickers;
+    this.websocketService.startWebsocket();
+    // subscribe to object in service
+    this.websocketService.behaviorSubjectTickerData.subscribe((message) => {
+      if (message.error) {
+        this.websocketError = message.error;
+        this.stopWebsocketService();
+        return;
+      }
+      if (message.value) {
+        const priceInfo: ITickerPriceInfo = {
+          value: message.value,
+          direction: '',
+        };
+
+        // console.log(priceInfo); // value, direction
+        // console.log(this.tickerdata); // datasource
+        // console.log(message.pair); // tickerpair i.e. XBT/EUR
+        // //this.tickerdata[message.pair] = priceInfo;
+
+        // push data to local object
+        this.addPriceInfoToData(priceInfo, message);
+      }
+    });
+  }
+
+  addPriceInfoToData(priceInfo: ITickerPriceInfo, message: ITickerData): void {
+    this.tickerdata.filteredData.forEach((item) => {
+      if (item.ticker.toString() == message.pair.toString()) {
+        const tmp1: any = item.c;
+        const rnd = Math.floor(Math.random() * 100);
+        const tmp2: any =
+          +item.c[0] < +priceInfo.value ? 'up' + rnd : 'down' + rnd;
+        item.direction = tmp2;
+        tmp1[0] = priceInfo.value;
+        item.c[0] = tmp1[0];
+      }
+    });
+  }
+
+  // hasData(pair: string): boolean {
+  //   if(!this.tickerdata[pair]) return false;
+  //   return this.tickerdata[pair].value !== '';
+  // }
+  stopWebsocketService() {
+    this.websocketService.stopWebsocket();
+  }
+
+  websocketIsEnabled(isEnabled: boolean): any {
+    if (isEnabled) return !this.websocketService.websocketIsStopped;
+    if (!isEnabled) return this.websocketService.websocketIsStopped;
+  }
+}
+interface ISub {
+  name: string;
+}
+interface ITickerData {
+  pair: string;
+  value: string;
+  direction?: string;
+}
+interface ITickerPriceInfo {
+  value: string;
+  direction: string;
+}
+interface IAuthTokenMessage {
+  error: any[];
+  result: IAuthTokenMessageResult;
+}
+interface IAuthTokenMessageResult {
+  expires: number;
+  token: string;
+}

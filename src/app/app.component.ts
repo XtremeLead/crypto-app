@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
 })
 export class AppComponent implements OnInit {
   title = 'Scee Scaa Scratchen';
@@ -20,6 +20,7 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {}
   getRoute(): String {
     const path = this.router.url.replace('/', '');
+    if (path === 'profitloss') return 'P&L';
     return path == '' ? 'Home' : this.capitalizeFirstLetter(path);
   }
   capitalizeFirstLetter(string: String) {

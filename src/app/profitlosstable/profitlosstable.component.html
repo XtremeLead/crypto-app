@@ -1,0 +1,117 @@
+<section
+  class="table-container"
+  tabindex="0"
+  *ngIf="tickerdata.data.length > 0"
+>
+  <mat-table [dataSource]="tickerdata" class="mat-elevation-z8">
+    <ng-container>
+      <ng-container matColumnDef="name" sticky>
+        <mat-header-cell *matHeaderCellDef> Ticker </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.ticker }} </mat-cell>
+        <mat-footer-cell *matFooterCellDef>Totaal</mat-footer-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="price">
+        <mat-header-cell *matHeaderCellDef> Aankoop prijs </mat-header-cell>
+        <!-- <mat-cell [@valueAnimation]="element.c[0]" *matCellDef="let element">
+          {{ element.c[0] | number: "1.2-" + getDecimals(element) }}</mat-cell
+        > -->
+        <mat-cell *matCellDef="let element; let i = index">
+            <div>
+              <input
+                type="tel"
+                matInput
+                value="{{ element.input1 }}"
+                placeholder="enter number"
+                [(ngModel)]="element.input1"
+                (change)="processInput($event, element, 0)"
+              />
+            </div>
+          </mat-cell>
+        <!-- <mat-footer-cell
+          *matFooterCellDef
+          [@valueAnimation]="calculateTotal()"
+          >{{ calculateTotal() | number: "1.2-2" }}</mat-footer-cell
+        > -->
+        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="amount">
+        <mat-header-cell *matHeaderCellDef> Aantal </mat-header-cell>
+        <mat-cell *matCellDef="let element; let i = index">
+          <div>
+            <input
+              type="tel"
+              matInput
+              value="{{ element.input2 }}"
+              placeholder="enter number"
+              [(ngModel)]="element.input2"
+              (change)="processInput($event, element, 1)"
+            />
+          </div>
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="newprice">
+        <mat-header-cell *matHeaderCellDef> Huidige prijs </mat-header-cell>
+        <mat-cell [@valueAnimation]="element.c[0]" *matCellDef="let element">
+          {{ element.c[0] | number: "1.2-" + getDecimals(element) }}</mat-cell
+        >
+        <!-- <mat-footer-cell
+          *matFooterCellDef
+          [@valueAnimation]="calculateTotal()"
+          >{{ calculateTotal() | number: "1.2-2" }}</mat-footer-cell
+        > -->
+        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="total">
+        <mat-header-cell *matHeaderCellDef> P&L </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          {{ calculatePL(element.input1, element.c[0], element.input2) | number: "1.2-2" }}
+        </mat-cell>
+        <mat-footer-cell
+          *matFooterCellDef
+          [@valueAnimation]="calculateTotal()"
+          >{{ calculateTotal() | number: "1.1-2" }}</mat-footer-cell
+        >
+        <!-- <mat-footer-cell *matFooterCellDef></mat-footer-cell> -->
+        
+      </ng-container>
+
+      <ng-container matColumnDef="pctchange">
+        <mat-header-cell *matHeaderCellDef> % </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          {{ calculatePctChange(element.input1, element.c[0]) | number: "1.0-0" }}%
+        </mat-cell>
+        <mat-footer-cell
+          *matFooterCellDef
+          >{{ calculateTotalPctChange() | number: "1.0-0" }}%</mat-footer-cell
+        >
+        <!-- <mat-footer-cell *matFooterCellDef></mat-footer-cell> -->
+        
+      </ng-container>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+    <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
+  </mat-table>
+</section>
+<p *ngIf="tickerdata.data.length > 0">
+  <button
+    mat-raised-button
+    (click)="startStream()"
+    [disabled]="websocketIsEnabled(true)"
+  >
+    Start Stream
+  </button>
+  <button
+    mat-raised-button
+    (click)="stopStream()"
+    [disabled]="websocketIsEnabled(false)"
+  >
+    Stop Stream
+  </button>
+</p>

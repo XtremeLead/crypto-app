@@ -24,4 +24,10 @@
     *ngIf="path == 'portfolio'"
     >€{{ portfolioTotal | number: "1.2-2" }}</span
   >
+  <span
+    class="total"
+    [@valueAnimation]="profitlossTotal"
+    *ngIf="path == 'profitloss'"
+    >€{{ profitlossTotal | number: "1.2-2" }}</span
+  >
 </div>
