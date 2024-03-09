@@ -8,28 +8,30 @@
     overflow-x: hidden;
   }
   .mat-column-name {
-    flex: 0 0 15%;
+    flex: 1 1 20%;
   }
   .mat-column-price {
-    flex: 0 0 20%;
+    flex: 1 1 20%;
   }
   .mat-column-amount {
-    flex: 0 0 15%;
+    flex: 1 1 15%;
   }
   .mat-column-newprice {
-    flex: 0 0 20%;
+    flex: 1 1 20%;
   }
   .mat-column-total {
-    flex: 0 0 15%;
+    flex: 1 1 15%;
   }
   .mat-column-pctchange {
-    flex: 0 0 10%;
+    flex: 1 1 10%;
   }
   
   .mat-raised-button {
     margin: 15px;
   }
-  
+  .hide{
+    display: none;
+  }
   /* Chrome, Safari, Edge, Opera */
   input::-webkit-outer-spin-button,
   input::-webkit-inner-spin-button {

@@ -53,18 +53,20 @@
         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
       </ng-container>
 
-      <ng-container matColumnDef="newprice">
-        <mat-header-cell *matHeaderCellDef> Huidige prijs </mat-header-cell>
-        <mat-cell [@valueAnimation]="element.c[0]" *matCellDef="let element">
-          {{ element.c[0] | number: "1.2-" + getDecimals(element) }}</mat-cell
-        >
-        <!-- <mat-footer-cell
-          *matFooterCellDef
-          [@valueAnimation]="calculateTotal()"
-          >{{ calculateTotal() | number: "1.2-2" }}</mat-footer-cell
-        > -->
-        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
-      </ng-container>
+
+        <ng-container matColumnDef="newprice">
+                <mat-header-cell *matHeaderCellDef [ngClass]="showCurrentPrice ? '' : 'hide'"> Huidige prijs </mat-header-cell>
+                <mat-cell [@valueAnimation]="element.c[0]" *matCellDef="let element" [ngClass]="showCurrentPrice ? '' : 'hide'">
+                {{ element.c[0] | number: "1.2-" + getDecimals(element) }}</mat-cell
+                >
+                <!-- <mat-footer-cell
+                *matFooterCellDef
+                [@valueAnimation]="calculateTotal()"
+                >{{ calculateTotal() | number: "1.2-2" }}</mat-footer-cell
+                > -->
+                <mat-footer-cell *matFooterCellDef [ngClass]="showCurrentPrice ? '' : 'hide'"></mat-footer-cell>
+            </ng-container>
+
 
       <ng-container matColumnDef="total">
         <mat-header-cell *matHeaderCellDef> P&L </mat-header-cell>
@@ -114,4 +116,12 @@
   >
     Stop Stream
   </button>
+  
 </p>
+<p>
+  Huidige prijs <input type="checkbox"
+    [(ngModel)]="showCurrentPrice"
+    (ngModelChange)="showCurrentPriceColumn()"
+    >
+</p>
+

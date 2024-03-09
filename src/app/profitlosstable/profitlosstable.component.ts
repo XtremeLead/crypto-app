@@ -56,6 +56,7 @@ export class ProfitlosstableComponent implements OnInit {
   websocketError: any = undefined;
   path = this.router.url.replace('/', '');
   pltotal: number = 0;
+  showCurrentPrice: boolean = true;
 
   ngOnInit(): void {
     //receive data from / subscribe to data in service
@@ -63,8 +64,15 @@ export class ProfitlosstableComponent implements OnInit {
       const combinedData = this.combineLocalStorageWithData(data);
       this.tickerdata.data = combinedData;
     });
+    this.showCurrentPrice =
+      localStorage.getItem('profitlosShowCurrentPrice') === 'true';
   }
-
+  showCurrentPriceColumn(): void {
+    localStorage.setItem(
+      'profitlosShowCurrentPrice',
+      this.showCurrentPrice.toString()
+    );
+  }
   processInput(event: any, ele: any, index: number): void {
     console.log(event, ele, index);
 
