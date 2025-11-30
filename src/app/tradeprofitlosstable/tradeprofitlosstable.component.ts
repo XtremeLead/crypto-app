@@ -58,6 +58,7 @@ export class TradeprofitlosstableComponent implements OnInit {
     'newprice',
     'total',
     'pctchange',
+    'delete',
   ];
   edits: any = {};
   json: string = '';
@@ -102,30 +103,44 @@ export class TradeprofitlosstableComponent implements OnInit {
   }
 
   processInput(event: any, ele: any, index: number): void {
-    // console.log(event, ele, index);
-
+    // update the localstorage
     this.updateLocalStorage(
       ele.uniqueId,
       `input${index + 1}`,
       event.target.value
     );
-    console.log(this.tickerdata.filteredData);
-    const arrTickers: any = JSON.parse(
+
+    // get the new localstorage
+    const arrTickers: ITicker[] = JSON.parse(
       localStorage.getItem(this.path + 'tickersjson')!
     );
+
+    this.combineAndSendData(arrTickers, ele);
+  }
+
+  combineAndSendData(arrTickers: ITicker[], ele: any): void {
     const newData: any = [];
-    arrTickers.forEach((ticker: ITicker) => {
+    // loop through all selected tickers
+    arrTickers.forEach((ticker) => {
+      // is this the ticker in localstorage we are updating?
       if (ticker.uniqueId === ele.uniqueId) {
-        this.tickerdata.filteredData.forEach((filteredTicker: ITickers) => {
-          console.log(ticker, filteredTicker);
-          newData.push({ ...ticker, ...filteredTicker });
-        });
+        // combine the updated ticker in localstorage with the realtime data
+        const thisRealTimeTicker = this.tickerdata.filteredData.filter(
+          (t) => t.uniqueId === ele.uniqueId
+        )[0];
+        //add the combined data
+        newData.push({ ...ticker, ...thisRealTimeTicker });
+      } else {
+        // add the realtime ticker
+        newData.push(
+          this.tickerdata.filteredData.filter(
+            (t) => t.uniqueId.toString() === ticker?.uniqueId?.toString()
+          )[0]
+        );
       }
     });
-    // const combinedData = this.combineLocalStorageWithData(
-    //   this.tickerdata.filteredData
-    // );
-    // this.cryptoService.setTickerData(newData);
+
+    this.cryptoService.setTickerData(newData);
   }
 
   updateLocalStorage(uniqueId: string, input: string, value: any): void {
@@ -182,23 +197,39 @@ export class TradeprofitlosstableComponent implements OnInit {
     return (this.pltotal / total) * 100;
   }
 
-  calculatePL(oldprice: number, newprice: number, amount: number) {
+  calculatePL(oldprice: number, newprice: number, amount: number): number {
     const pricediff = newprice - oldprice;
     return amount * pricediff;
   }
 
-  calculatePctChange(oldprice: number, newprice: number) {
+  calculatePctChange(oldprice: number, newprice: number): number {
     return ((newprice - oldprice) / oldprice) * 100;
   }
 
-  sendTotaltoService(total: number) {
+  sendTotaltoService(total: number): void {
     this.TradeprofitlossService.sendTotalMsg(total);
   }
 
-  getDecimals(element: ITicker) {
+  getDecimals(element: ITicker): number | undefined {
     const decimals = element.decimals;
     if (!decimals) return 2;
     return element.decimals == 1 ? 2 : element.decimals;
+  }
+
+  deleteItem(ticker: ITicker): void {
+    console.log(ticker.uniqueId);
+    const arrTickers: ITicker[] = JSON.parse(
+      localStorage.getItem(this.path + 'tickersjson')!
+    );
+    const indexToDelete = arrTickers.findIndex(
+      (t) => t.uniqueId === ticker.uniqueId
+    );
+
+    arrTickers.splice(indexToDelete, 1);
+    localStorage.setItem(this.path + 'tickersjson', JSON.stringify(arrTickers));
+
+    this.combineAndSendData(arrTickers, ticker);
+    // this.cryptoService.setTickerData(arrTickers);
   }
 
   // Websocket stuff
