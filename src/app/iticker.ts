@@ -23,6 +23,8 @@ export interface ITicker {
   name?: string;
   input1?: any;
   input2?: any;
+  input3?: any;
   ticker?: string;
   decimals?: number;
+  uniqueId?: string;
 }
