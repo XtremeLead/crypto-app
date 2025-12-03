@@ -3,10 +3,11 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { ITickerPairs } from './iticker-pairs';
 import { ITickers } from './itickers';
+import { ITicker } from './iticker';
 import { catchError, tap } from 'rxjs/operators';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CryptosService {
   private corsUrl = 'https://m.waabaa.nl/php/cors.php';
@@ -27,7 +28,7 @@ export class CryptosService {
     params.append('objectKey', 'result');
 
     return this.http.post<ITickerPairs[]>(this.corsUrl, params).pipe(
-      tap(result => {
+      tap((result) => {
         //console.log('fetching pairs done', result)
       })
       //catchError(this.handleError)
@@ -41,7 +42,7 @@ export class CryptosService {
     params.append('query', this.tickerSuffix + tickers);
 
     return this.http.post<ITickers[]>(this.corsUrl, params).pipe(
-      tap(result => {
+      tap((result) => {
         console.log('fetching prices done', result);
       })
       //catchError(this.handleError)
@@ -54,7 +55,7 @@ export class CryptosService {
     console.log('fetchohl');
     //&since=1657058400&interval=1440
     const vals: { [key: string]: any } = {};
-    tickers.forEach(ticker => {
+    tickers.forEach((ticker) => {
       vals.name = ticker;
       vals.values = [];
       const params = new FormData();
@@ -67,7 +68,7 @@ export class CryptosService {
       console.log(params);
 
       this.http.post<any>(this.corsUrl, params).pipe(
-        tap(result => {
+        tap((result) => {
           vals.values = result;
           console.log(vals);
         })

@@ -37,7 +37,7 @@ export class TradeprofitlosstableComponent implements OnInit {
   ) {
     //receive data from / subscribe to data in service
     this.cryptoService.tickerData.subscribe((data: ITickers[]) => {
-      //console.log('received data', data);
+      console.log('received data', data);
       this.tickerdata.data = data;
     });
   }
@@ -128,19 +128,40 @@ export class TradeprofitlosstableComponent implements OnInit {
         const thisRealTimeTicker = this.tickerdata.filteredData.filter(
           (t) => t.uniqueId === ele.uniqueId
         )[0];
+
         //add the combined data
-        newData.push({ ...ticker, ...thisRealTimeTicker });
+        newData.push({ ...thisRealTimeTicker, ...ticker });
       } else {
         // add the realtime ticker
-        newData.push(
-          this.tickerdata.filteredData.filter(
-            (t) => t.uniqueId.toString() === ticker?.uniqueId?.toString()
-          )[0]
-        );
+        const temp = this.tickerdata.filteredData.filter(
+          (t) => t.uniqueId.toString() === ticker?.uniqueId?.toString()
+        )[0];
+
+        newData.push(temp);
       }
     });
 
     this.cryptoService.setTickerData(newData);
+
+    this.removeDuplicatesFromTickerdata();
+  }
+
+  removeDuplicatesFromTickerdata(): void {
+    const seen = new Set<string>();
+    this.tickerdata.data = this.tickerdata.data.filter((row: any) => {
+      if (
+        row &&
+        typeof row === 'object' &&
+        'uniqueId' in row &&
+        typeof row.uniqueId === 'string'
+      ) {
+        if (!seen.has(row.uniqueId)) {
+          seen.add(row.uniqueId);
+          return true;
+        }
+      }
+      return false;
+    });
   }
 
   updateLocalStorage(uniqueId: string, input: string, value: any): void {
@@ -217,7 +238,6 @@ export class TradeprofitlosstableComponent implements OnInit {
   }
 
   deleteItem(ticker: ITicker): void {
-    console.log(ticker.uniqueId);
     const arrTickers: ITicker[] = JSON.parse(
       localStorage.getItem(this.path + 'tickersjson')!
     );

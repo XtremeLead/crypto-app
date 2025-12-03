@@ -21,6 +21,7 @@ export class AppComponent implements OnInit {
   getRoute(): String {
     const path = this.router.url.replace('/', '');
     if (path === 'profitloss') return 'P&L';
+    if (path === 'tradeprofitloss') return 'Trade P&L';
     return path == '' ? 'Home' : this.capitalizeFirstLetter(path);
   }
   capitalizeFirstLetter(string: String) {

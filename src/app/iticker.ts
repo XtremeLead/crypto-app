@@ -26,5 +26,5 @@ export interface ITicker {
   input3?: any;
   ticker?: string;
   decimals?: number;
-  uniqueId?: string;
+  uniqueId: string;
 }

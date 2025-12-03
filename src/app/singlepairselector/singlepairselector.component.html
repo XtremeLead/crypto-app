@@ -15,7 +15,13 @@
 </mat-form-field>
 
 <div class="fullRow">
-  <button mat-raised-button (click)="addRow($event)">Voeg toe</button>
+  <button
+    mat-raised-button
+    [disabled]="selectedPair === ''"
+    (click)="addRow($event)"
+  >
+    Voeg toe
+  </button>
   <!-- <button mat-raised-button (click)="getTickerData($event)">
     Haal prijzen op
   </button> -->

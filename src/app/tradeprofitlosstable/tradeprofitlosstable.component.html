@@ -7,7 +7,9 @@
     <ng-container>
       <ng-container matColumnDef="name" sticky>
         <mat-header-cell *matHeaderCellDef> Ticker </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.ticker }} </mat-cell>
+        <mat-cell *matCellDef="let element" title="{{ element.uniqueId }}">
+          {{ element.ticker }}
+        </mat-cell>
         <mat-footer-cell *matFooterCellDef>Totaal</mat-footer-cell>
       </ng-container>
 
@@ -129,7 +131,7 @@
       <ng-container matColumnDef="delete">
         <mat-header-cell *matHeaderCellDef> Delete </mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <button mat-button (click)="deleteItem(element)">
+          <button mat-button class="red" (click)="deleteItem(element)">
             &#10006;
           </button></mat-cell
         >
