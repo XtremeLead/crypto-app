@@ -1,5 +1,6 @@
 .red{
     color: red;
+    padding: 0;
 }
 .mat-raised-button {
   display: inline-flex;
@@ -21,31 +22,32 @@ input[type=date]{
     overflow-x: hidden;
   }
   .mat-column-name {
-    flex: 1 1 12%;
+    flex: 1 0 5rem;
   }
   .mat-column-price {
-    flex: 1 1 15%;
+    flex: 1 0 6rem;
   }
   .mat-column-amount {
-    flex: 1 1 10%;
+    flex: 1 0 4rem;
   }
   .mat-column-newprice {
-    flex: 1 1 12%;
+    flex: 1 0 6rem;
   }
   .mat-column-total {
-    flex: 1 1 10%;
+    flex: 1 0 4rem;
   }
   .mat-column-pctchange {
-    flex: 1 1 10%;
+    flex: 1 0 3rem;
   }
   .mat-column-delete {
-    flex: 1 1 5%;
+    flex: 1 0 4rem;
   }
-    .mat-column-date {
-    flex: 1 1 20%;
+  .mat-column-date {
+    flex: 1 0 8rem;
   }
-    .mat-raised-button {
+  .mat-raised-button {
     margin: 15px;
+    
   }
   .hide{
     display: none;
