@@ -8,3 +8,57 @@
 input[type=date]{
   margin-top:0.9rem;
 }
+.mat-column-delete{
+  justify-content: center;
+}
+.table-container {
+    width: 100%;
+    max-width: 100%;
+    overflow: auto;
+  }
+  mat-table {
+    /* width: 800px; */
+    overflow-x: hidden;
+  }
+  .mat-column-name {
+    flex: 1 1 12%;
+  }
+  .mat-column-price {
+    flex: 1 1 15%;
+  }
+  .mat-column-amount {
+    flex: 1 1 10%;
+  }
+  .mat-column-newprice {
+    flex: 1 1 12%;
+  }
+  .mat-column-total {
+    flex: 1 1 10%;
+  }
+  .mat-column-pctchange {
+    flex: 1 1 10%;
+  }
+  .mat-column-delete {
+    flex: 1 1 5%;
+  }
+    .mat-column-date {
+    flex: 1 1 20%;
+  }
+    .mat-raised-button {
+    margin: 15px;
+  }
+  .hide{
+    display: none;
+  }
+  /* Chrome, Safari, Edge, Opera */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  
+  /* Firefox */
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+  

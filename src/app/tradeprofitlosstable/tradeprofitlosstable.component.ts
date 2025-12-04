@@ -97,7 +97,7 @@ export class TradeprofitlosstableComponent implements OnInit {
 
   showCurrentPriceColumn(): void {
     localStorage.setItem(
-      'profitlosShowCurrentPrice',
+      'tradeprofitlosShowCurrentPrice',
       this.showCurrentPrice.toString()
     );
   }
@@ -128,10 +128,15 @@ export class TradeprofitlosstableComponent implements OnInit {
         const thisRealTimeTicker = this.tickerdata.filteredData.filter(
           (t) => t.uniqueId === ele.uniqueId
         )[0];
+        // console.log('hier', ele.uniqueId);
 
         //add the combined data
-        newData.push({ ...thisRealTimeTicker, ...ticker });
+        const tmp = { ...thisRealTimeTicker, ...ticker };
+        // console.log(tmp);
+
+        newData.push(tmp);
       } else {
+        // console.log('of hier', ele.uniqueId);
         // add the realtime ticker
         const temp = this.tickerdata.filteredData.filter(
           (t) => t.uniqueId.toString() === ticker?.uniqueId?.toString()
@@ -140,6 +145,7 @@ export class TradeprofitlosstableComponent implements OnInit {
         newData.push(temp);
       }
     });
+    console.log(newData.length);
 
     this.cryptoService.setTickerData(newData);
 
@@ -147,21 +153,19 @@ export class TradeprofitlosstableComponent implements OnInit {
   }
 
   removeDuplicatesFromTickerdata(): void {
-    const seen = new Set<string>();
-    this.tickerdata.data = this.tickerdata.data.filter((row: any) => {
-      if (
-        row &&
-        typeof row === 'object' &&
-        'uniqueId' in row &&
-        typeof row.uniqueId === 'string'
-      ) {
-        if (!seen.has(row.uniqueId)) {
-          seen.add(row.uniqueId);
-          return true;
-        }
+    const result = [];
+    const seen = new Set();
+
+    // loop through array backwards, because of all duplicate items in this.tickerdata.data
+    // the last one is the empty needed one. The rest has duplicated values in the input1, 2 and 3.
+    for (let i = this.tickerdata.data.length - 1; i >= 0; i--) {
+      const item = this.tickerdata.data[i];
+      if (!seen.has(item.uniqueId)) {
+        seen.add(item.uniqueId);
+        result.push(item);
       }
-      return false;
-    });
+    }
+    this.tickerdata.data = result.reverse();
   }
 
   updateLocalStorage(uniqueId: string, input: string, value: any): void {
