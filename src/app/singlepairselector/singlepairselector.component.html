@@ -1,4 +1,4 @@
-<mat-form-field>
+<!-- <mat-form-field>
   <mat-label>Select an option</mat-label>
   <mat-select
     [(value)]="selected"
@@ -12,6 +12,25 @@
       {{ p.wsname }}
     </mat-option>
   </mat-select>
+</mat-form-field> -->
+
+<mat-form-field>
+  <input
+    type="text"
+    matInput
+    placeholder="Select pair"
+    [formControl]="pairCtrl"
+    [matAutocomplete]="auto"
+  />
+
+  <mat-autocomplete
+    #auto="matAutocomplete"
+    (optionSelected)="selectedPair = $event.option.value"
+  >
+    <mat-option *ngFor="let p of filteredPairs | async" [value]="p.name">
+      {{ p.wsname }}
+    </mat-option>
+  </mat-autocomplete>
 </mat-form-field>
 
 <div class="fullRow">

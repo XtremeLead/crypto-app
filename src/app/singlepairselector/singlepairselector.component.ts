@@ -7,6 +7,9 @@ import { Router } from '@angular/router';
 import { PortfolioTotalService } from '../portfolio-total.service';
 import { ProfitlossService } from '../profitloss.service';
 import { trigger, style, transition, animate } from '@angular/animations';
+import { FormControl } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 
 @Component({
   selector: 'app-singlepairselector',
@@ -34,6 +37,9 @@ export class SinglepairselectorComponent implements OnInit {
   path: String = '';
   selectedPair = '';
 
+  pairCtrl = new FormControl('');
+  filteredPairs!: Observable<ITickerPairsFlat[]>;
+
   @Output() otickerdata = new EventEmitter<any>();
   @Input() filter: string = '';
 
@@ -47,6 +53,18 @@ export class SinglepairselectorComponent implements OnInit {
     // this.profitlossService.totalMsg$.subscribe((message) => {
     //   this.profitlossTotal = message;
     // });
+    this.filteredPairs = this.pairCtrl.valueChanges.pipe(
+      startWith(''),
+      map((value) => this.filterPairs(value || ''))
+    );
+  }
+  filterPairs(value: string): ITickerPairsFlat[] {
+    const filterValue = value.toLowerCase();
+    return this.flattenedPairs.filter(
+      (p) =>
+        p.wsname.toLowerCase().includes(filterValue) ||
+        p.name.toLowerCase().includes(filterValue)
+    );
   }
   getPairs(): void {
     this.cryptoService.fetchPairs().subscribe((tickerpairs) => {
@@ -72,6 +90,7 @@ export class SinglepairselectorComponent implements OnInit {
       } else {
         this.flattenedPairs = this.sortPairs(tmpArray);
       }
+      console.log(this.flattenedPairs);
     });
   }
 
