@@ -189,9 +189,9 @@ export class TradeprofitlosstableComponent implements OnInit {
 
   calculateTotal() {
     const total = this.tickerdata.filteredData.reduce((accum, curr) => {
-      let oldprice = 0;
-      let newprice = 0;
-      let amount = 0;
+      let oldprice: number = 0;
+      let newprice: number = 0;
+      let amount: number = 0;
       try {
         oldprice = parseFloat(curr.input1.toString());
         amount = parseFloat(curr.input2.toString());
@@ -205,8 +205,8 @@ export class TradeprofitlosstableComponent implements OnInit {
   }
   calculateTotalPctChange() {
     const total = this.tickerdata.filteredData.reduce((accum, curr) => {
-      let oldprice = 0;
-      let amount = 0;
+      let oldprice: number = 0;
+      let amount: number = 0;
 
       try {
         oldprice = parseFloat(curr.input1.toString());

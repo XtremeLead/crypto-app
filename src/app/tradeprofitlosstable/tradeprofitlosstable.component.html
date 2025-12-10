@@ -119,11 +119,11 @@
         <mat-header-cell *matHeaderCellDef> % </mat-header-cell>
         <mat-cell *matCellDef="let element">
           {{
-            calculatePctChange(element.input1, element.c[0]) | number : "1.0-0"
+            calculatePctChange(element.input1, element.c[0]) | number : "1.1-1"
           }}%
         </mat-cell>
         <mat-footer-cell *matFooterCellDef
-          >{{ calculateTotalPctChange() | number : "1.0-0" }}%</mat-footer-cell
+          >{{ calculateTotalPctChange() | number : "1.1-1" }}%</mat-footer-cell
         >
         <!-- <mat-footer-cell *matFooterCellDef></mat-footer-cell> -->
       </ng-container>

@@ -31,13 +31,15 @@ input[type=date]{
     flex: 1 0 4rem;
   }
   .mat-column-newprice {
-    flex: 1 0 6rem;
+    flex: 1 0 5rem;
   }
   .mat-column-total {
-    flex: 1 0 4rem;
+    flex: 1 0 3rem;
+    flex-direction: row-reverse;
   }
   .mat-column-pctchange {
     flex: 1 0 3rem;
+    flex-direction: row-reverse;
   }
   .mat-column-delete {
     flex: 1 0 4rem;
