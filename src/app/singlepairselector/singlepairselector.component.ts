@@ -90,7 +90,6 @@ export class SinglepairselectorComponent implements OnInit {
       } else {
         this.flattenedPairs = this.sortPairs(tmpArray);
       }
-      console.log(this.flattenedPairs);
     });
   }
 

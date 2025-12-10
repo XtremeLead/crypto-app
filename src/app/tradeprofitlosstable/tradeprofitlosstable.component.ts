@@ -120,24 +120,21 @@ export class TradeprofitlosstableComponent implements OnInit {
 
   combineAndSendData(arrTickers: ITicker[], ele: any): void {
     const newData: any = [];
-    // loop through all selected tickers
+    // loop through all selected tickers in localstorage
     arrTickers.forEach((ticker) => {
       // is this the ticker in localstorage we are updating?
       if (ticker.uniqueId === ele.uniqueId) {
-        // combine the updated ticker in localstorage with the realtime data
+        // Find the corresponding tivker
         const thisRealTimeTicker = this.tickerdata.filteredData.filter(
           (t) => t.uniqueId === ele.uniqueId
         )[0];
-        // console.log('hier', ele.uniqueId);
 
-        //add the combined data
+        // combine the updated ticker in localstorage with the realtime data
         const tmp = { ...thisRealTimeTicker, ...ticker };
-        // console.log(tmp);
 
         newData.push(tmp);
       } else {
-        // console.log('of hier', ele.uniqueId);
-        // add the realtime ticker
+        // keep the realtime ticker we diod not update
         const temp = this.tickerdata.filteredData.filter(
           (t) => t.uniqueId.toString() === ticker?.uniqueId?.toString()
         )[0];
@@ -145,7 +142,6 @@ export class TradeprofitlosstableComponent implements OnInit {
         newData.push(temp);
       }
     });
-    console.log(newData.length);
 
     this.cryptoService.setTickerData(newData);
 

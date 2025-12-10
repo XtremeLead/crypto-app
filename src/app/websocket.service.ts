@@ -5,28 +5,27 @@ import { environment } from '../environments/environment';
 import { TokenService } from './token.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class WebsocketService {
   subject!: WebSocketSubject<any>;
   endpointStatus!: string;
   sub: ISub = {
-    name: 'ticker'
+    name: 'ticker',
   };
   pairs: Array<string> = [];
   subscriptionMessage: ISubMsg = {
     event: 'subscribe',
     subscription: this.sub,
-    pair: this.pairs
+    pair: this.pairs,
   };
   websocketIsStopped: boolean = true;
   authToken!: string;
 
   // provide subscribable object
   private stream: any = [];
-  behaviorSubjectTickerData: BehaviorSubject<ITickerData> = new BehaviorSubject<
-    ITickerData
-  >(this.stream);
+  behaviorSubjectTickerData: BehaviorSubject<ITickerData> =
+    new BehaviorSubject<ITickerData>(this.stream);
 
   constructor(private tokenService: TokenService) {}
 
@@ -38,30 +37,56 @@ export class WebsocketService {
 
   startWebsocket(): void {
     if (this.endpointStatus == 'online') {
-      this.subject = <WebSocketSubject<any>>webSocket(this.whichEndpoint());
+      // this.subject = <WebSocketSubject<any>>webSocket(this.whichEndpoint());
+      this.subject = webSocket({
+        url: this.whichEndpoint(),
+        openObserver: {
+          next: () => console.log('WebSocket: OPEN'),
+        },
+        closeObserver: {
+          next: (closeEvent: CloseEvent) => {
+            console.log('WebSocket: CLOSED', closeEvent);
+          },
+        },
+        // optional: ensure messages are parsed for you
+        deserializer: (msg) => JSON.parse(msg.data),
+      });
 
       if (environment.usePrivateEndpoint) {
         this.subscriptionMessage = {
           event: 'subscribe',
           subscription: {
             name: 'ownTrades',
-            token: this.authToken
-          }
+            token: this.authToken,
+          },
         };
       } else {
         this.subscriptionMessage = {
           event: 'subscribe',
           subscription: this.sub,
-          pair: this.pairs
+          pair: this.pairs,
         };
       }
 
       console.log('start ws');
 
-      this.subject.subscribe(data => {
-        this.parseMessage(data);
+      // this.subject.subscribe((data) => {
+      //   this.parseMessage(data);
+      // });
+      // this.subject.next(this.subscriptionMessage);
+
+      this.subject.subscribe({
+        next: (data) => this.parseMessage(data),
+        error: (err) => {
+          console.error('WebSocket error:', err);
+          // handle UI / state update
+        },
+        complete: () => console.log('WebSocket completed'),
       });
+
+      // send initial subscription message
       this.subject.next(this.subscriptionMessage);
+
       this.websocketIsStopped = false;
     } else {
       console.log('endpoint offline?');
@@ -76,7 +101,7 @@ export class WebsocketService {
     ) {
       const tickerdata: ITickerData = {
         pair: data[3],
-        value: data[1]['c'][0]
+        value: data[1]['c'][0],
       };
       // push new data to subscribable object
       this.behaviorSubjectTickerData.next(tickerdata);
@@ -86,7 +111,7 @@ export class WebsocketService {
       const tickerdata: ITickerData = {
         pair: '-',
         value: '-',
-        error: data.errorMessage
+        error: data.errorMessage,
       };
       // push error data to subscribable object
       this.behaviorSubjectTickerData.next(tickerdata);
