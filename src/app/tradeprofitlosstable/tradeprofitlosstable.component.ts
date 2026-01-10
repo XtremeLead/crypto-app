@@ -357,6 +357,9 @@ export class TradeprofitlosstableComponent implements OnInit {
         arrTickers = JSON.parse(
           localStorage.getItem(this.path + 'tickersjson')!
         );
+        if (!arrTickers) {
+          arrTickers = [];
+        }
       } catch (error) {
         arrTickers = [];
       }
@@ -384,8 +387,6 @@ export class TradeprofitlosstableComponent implements OnInit {
   validatedJSON(): boolean {
     try {
       const trades: importDataArray = JSON.parse(this.importTradesJSON);
-      console.log(trades);
-
       if (this.isImportDataArray(trades)) {
         this.importTradesCount = trades.length;
         return true;
