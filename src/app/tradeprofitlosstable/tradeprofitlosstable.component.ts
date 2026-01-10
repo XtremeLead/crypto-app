@@ -67,32 +67,38 @@ export class TradeprofitlosstableComponent implements OnInit {
   path = this.router.url.replace('/', '');
   pltotal: number = 0;
   showCurrentPrice: boolean = true;
+  importTradesJSON: string = '';
+  importTradesCount: number = 0;
 
   combineLocalStorageWithData(data: any): any {
     //data is the array of subscribed pairs
     const completeData = [];
-    const arrTickers: any = JSON.parse(
-      localStorage.getItem(this.path + 'tickersjson')!
-    );
+    try {
+      const arrTickers: any = JSON.parse(
+        localStorage.getItem(this.path + 'tickersjson')!
+      );
 
-    for (let i in arrTickers) {
-      for (let j in data) {
-        // console.log(arrTickers[i]['uniqueId'], data[j]['uniqueId']);
+      for (let i in arrTickers) {
+        for (let j in data) {
+          // console.log(arrTickers[i]['uniqueId'], data[j]['uniqueId']);
 
-        if (arrTickers[i]['name'] == data[j]['name']) {
-          // combine
-          // data[j] = {
-          //   ...data[j],
-          //   ...arrTickers[i],
-          // };
-          completeData.push({
-            ...data[j],
-            ...arrTickers[i],
-          });
+          if (arrTickers[i]['name'] == data[j]['name']) {
+            // combine
+            // data[j] = {
+            //   ...data[j],
+            //   ...arrTickers[i],
+            // };
+            completeData.push({
+              ...data[j],
+              ...arrTickers[i],
+            });
+          }
         }
       }
+      return completeData;
+    } catch (error) {
+      return [];
     }
-    return completeData;
   }
 
   showCurrentPriceColumn(): void {
@@ -342,6 +348,89 @@ export class TradeprofitlosstableComponent implements OnInit {
     if (isEnabled) return !this.websocketService.websocketIsStopped;
     if (!isEnabled) return this.websocketService.websocketIsStopped;
   }
+
+  importTrades(): void {
+    try {
+      const trades: importDataArray = JSON.parse(this.importTradesJSON);
+      let arrTickers: any;
+      try {
+        arrTickers = JSON.parse(
+          localStorage.getItem(this.path + 'tickersjson')!
+        );
+      } catch (error) {
+        arrTickers = [];
+      }
+      localStorage.setItem(
+        this.path + 'tickersjson',
+        JSON.stringify([...trades, ...arrTickers])
+      );
+    } catch (error) {
+      console.log(error);
+    }
+    this.importTradesCount = 0;
+    this.importTradesJSON = '';
+  }
+
+  readonly REQUIRED_KEYS: (keyof importData)[] = [
+    'decimals',
+    'input1',
+    'input2',
+    'input3',
+    'name',
+    'ticker',
+    'uniqueId',
+  ];
+
+  validatedJSON(): boolean {
+    try {
+      const trades: importDataArray = JSON.parse(this.importTradesJSON);
+      console.log(trades);
+
+      if (this.isImportDataArray(trades)) {
+        this.importTradesCount = trades.length;
+        return true;
+      } else {
+        console.log('not');
+      }
+    } catch (error) {
+      return false;
+    }
+    return false;
+  }
+
+  isImportData = (obj: any): obj is importData => {
+    if (typeof obj !== 'object' || obj === null) {
+      return false;
+    }
+
+    const keys = Object.keys(obj);
+
+    // no more, no less
+    if (keys.length !== this.REQUIRED_KEYS.length) {
+      return false;
+    }
+
+    // must contain all keys
+    for (const key of this.REQUIRED_KEYS) {
+      if (!(key in obj)) {
+        return false;
+      }
+    }
+
+    // type checks
+    return (
+      typeof obj.decimals === 'number' &&
+      typeof obj.input1 === 'string' &&
+      typeof obj.input2 === 'string' &&
+      typeof obj.input3 === 'string' &&
+      typeof obj.name === 'string' &&
+      typeof obj.uniqueId === 'string'
+    );
+  };
+  isImportDataArray(data: unknown): data is importDataArray {
+    const ret: boolean = Array.isArray(data) && data.every(this.isImportData);
+    return ret;
+  }
 }
 interface ISub {
   name: string;
@@ -363,3 +452,13 @@ interface IAuthTokenMessageResult {
   expires: number;
   token: string;
 }
+interface importData {
+  decimals: number;
+  input1: string;
+  input2: string;
+  input3: string;
+  name: string;
+  ticker: string;
+  uniqueId: string;
+}
+interface importDataArray extends Array<importData> {}

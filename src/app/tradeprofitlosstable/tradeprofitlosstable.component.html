@@ -169,3 +169,15 @@
     (ngModelChange)="showCurrentPriceColumn()"
   />
 </p>
+<p class="import">
+  <label for="importText">Importeer trades (JSON)</label>
+  <textarea id="importText" type="checkbox" [(ngModel)]="importTradesJSON">
+  </textarea>
+  <button
+    mat-raised-button
+    (click)="importTrades()"
+    [disabled]="!validatedJSON()"
+  >
+    Importeer {{ importTradesCount == 0 ? "" : importTradesCount + " trades" }}
+  </button>
+</p>

@@ -154,8 +154,12 @@ export class SinglepairselectorComponent implements OnInit {
   }
 
   getFromLocalStorage(name: string): Array<any> {
-    const json: string = localStorage.getItem(name)!;
-    return JSON.parse(json);
+    try {
+      const json: string = localStorage.getItem(name)!;
+      return JSON.parse(json);
+    } catch (error) {
+      return [];
+    }
   }
 
   getSelectedTickers(): void {
