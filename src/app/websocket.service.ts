@@ -80,6 +80,7 @@ export class WebsocketService {
         error: (err) => {
           console.error('WebSocket error:', err);
           // handle UI / state update
+          // closevente code 1006, type 'close'
         },
         complete: () => console.log('WebSocket completed'),
       });
